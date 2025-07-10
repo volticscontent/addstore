@@ -26,13 +26,16 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Progress } from "@/components/ui/progress"
+import ShopifyBuyButton from "@/components/shopify-buy-button"
 
 const productImages = [
-  "/placeholder.svg?height=600&width=600&text=Jersey+Principal",
-  "/placeholder.svg?height=600&width=600&text=Jersey+Frente",
-  "/placeholder.svg?height=600&width=600&text=Jersey+Costas",
-  "/placeholder.svg?height=600&width=600&text=Jersey+Detalhe",
-  "/placeholder.svg?height=600&width=600&text=Jersey+Modelo",
+  "1.png",
+  "2.png",
+  "3.png",
+  "4.png",
+  "5.png",
+  "6.png",
+  "7.png",
 ]
 
 const players = [
@@ -68,6 +71,7 @@ const reviews = [
     author: "Mariana G.",
     helpful: 47,
     unhelpful: 2,
+    verified: true,
   },
   {
     id: 2,
@@ -77,6 +81,7 @@ const reviews = [
     author: "Luis E.",
     helpful: 0,
     unhelpful: 0,
+    verified: true,
   },
   {
     id: 3,
@@ -86,6 +91,7 @@ const reviews = [
     author: "Carla M.",
     helpful: 23,
     unhelpful: 1,
+    verified: false,
   },
   {
     id: 4,
@@ -399,7 +405,7 @@ export default function ProductPage() {
     if (reviewsElement) {
       reviewsElement.scrollIntoView({ behavior: "smooth", block: "start" })
       // Open the reviews accordion if it's closed
-      const reviewsAccordion = reviewsElement.querySelector('[data-state="closed"]')
+      const reviewsAccordion = reviewsElement.querySelector('[data-state="closed"]') as HTMLElement
       if (reviewsAccordion) {
         reviewsAccordion.click()
       }
@@ -448,9 +454,9 @@ export default function ProductPage() {
               fill
               className="object-cover"
             />
-            {/* Personalizable Badge - Left Side */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
-              <div className="bg-white text-black px-3 py-6 text-xs font-bold tracking-wider transform -rotate-90 origin-center border border-gray-200 shadow-sm flex items-center justify-center min-w-[120px]">
+            {/* Personalizable Badge - Top Left */}
+            <div className="absolute left-2 top-2 z-10">
+              <div className="text-white px-3 py-3 text-xs font-bold tracking-wider flex items-center justify-center min-w-[80px]">
                 PERSONALIZABLE
               </div>
             </div>
@@ -556,57 +562,141 @@ export default function ProductPage() {
           </Card>
 
           {/* Size Selection */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold">Tallas</h3>
-              <button
-                onClick={() => setShowSizeGuide(true)}
-                className="text-sm p-0 h-auto underline hover:no-underline flex items-center"
-              >
-                <Info className="w-4 h-4 mr-1" />
-                Guía de tallas
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {sizes.map(({ size, available }) => (
-                <Button
-                  key={size}
-                  variant={selectedSize === size ? "default" : "outline"}
-                  disabled={!available}
-                  onClick={() => available && setSelectedSize(size)}
-                  className={`relative ${!available ? "opacity-50" : ""}`}
-                >
-                  {size}
-                  {!available && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-full h-px bg-gray-400 rotate-45" />
-                    </div>
-                  )}
-                </Button>
-              ))}
-            </div>
-
-            <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-              <Info className="w-4 h-4" />
-              <span>
-                <strong>Talla real.</strong> Te recomendamos pedir tu talla habitual.
-              </span>
-            </div>
-          </div>
+          {/* Removido campo de seleção de tamanhos e botão 'Selecciona la talla' conforme solicitado */}
 
           {/* Add to Cart */}
-          <div className="space-y-3">
-            <Button className="w-full" size="lg" disabled={!selectedSize}>
-              {selectedSize ? "Agregar al carrito" : "Selecciona la talla"}
-            </Button>
+          <div className="space-y-3 flex flex-col items-center">
+            {/* Shopify Buy Button centralizado */}
+            <div className="w-full flex justify-center">
+              <ShopifyBuyButton
+                productId="14705780293997"
+                storefrontAccessToken="f8b561a2fc2d25e9124114d58c0b7643"
+                domain="s1qbpp-6n.myshopify.com"
+                moneyFormat="%24%7B%7Bamount%7D%7D"
+                options={{
+                  "product": {
+                    "styles": {
+                      "product": {
+                        "@media (min-width: 601px)": {
+                          "max-width": "100%",
+                          "margin-left": "0px",
+                          "margin-bottom": "20px"
+                        }
+                      },
+                      "button": {
+                        "font-weight": "bold",
+                        ":hover": {
+                          "background-color": "#202020"
+                        },
+                        "background-color": "#131313",
+                        ":focus": {
+                          "background-color": "#202020"
+                        },
+                        "border-radius": "0px",
+                        "padding-left": "97px",
+                        "padding-right": "97px",
+                        "margin": "0 auto",
+                        "display": "block"
+                      }
+                    },
+                    "contents": {
+                      "img": false,
+                      "title": false,
+                      "price": false
+                    },
+                    "text": {
+                      "button": "Añadir al carrito"
+                    }
+                  },
+                  "productSet": {
+                    "styles": {
+                      "products": {
+                        "@media (min-width: 601px)": {
+                          "margin-left": "0px"
+                        }
+                      }
+                    }
+                  },
+                  "modalProduct": {
+                    "contents": {
+                      "img": false,
+                      "imgWithCarousel": true,
+                      "button": false,
+                      "buttonWithQuantity": true
+                    },
+                    "styles": {
+                      "product": {
+                        "@media (min-width: 601px)": {
+                          "max-width": "100%",
+                          "margin-left": "0px",
+                          "margin-bottom": "0px"
+                        }
+                      },
+                      "button": {
+                        "font-weight": "bold",
+                        ":hover": {
+                          "background-color": "#202020"
+                        },
+                        "background-color": "#131313",
+                        ":focus": {
+                          "background-color": "#202020"
+                        },
+                        "border-radius": "0px",
+                        "padding-left": "97px",
+                        "padding-right": "97px",
+                        "margin": "0 auto",
+                        "display": "block"
+                      }
+                    },
+                    "text": {
+                      "button": "Add to cart"
+                    }
+                  },
+                  "option": {},
+                  "cart": {
+                    "styles": {
+                      "button": {
+                        "font-weight": "bold",
+                        ":hover": {
+                          "background-color": "#202020"
+                        },
+                        "background-color": "#131313",
+                        ":focus": {
+                          "background-color": "#202020"
+                        },
+                        "border-radius": "0px"
+                      }
+                    },
+                    "text": {
+                      "title": "Carrito",
+                      "total": "Subtotal",
+                      "empty": "Su cesta está vacía.",
+                      "notice": "Los códigos de envío y descuento se añaden al finalizar la compra.",
+                      "button": "Checkout"
+                    }
+                  },
+                  "toggle": {
+                    "styles": {
+                      "toggle": {
+                        "font-weight": "bold",
+                        "background-color": "#131313",
+                        ":hover": {
+                          "background-color": "#202020"
+                        },
+                        ":focus": {
+                          "background-color": "#202020"
+                        }
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
 
             <Button variant="outline" className="w-full bg-transparent" size="lg">
               <Heart className="w-4 h-4 mr-2" />
               Agregar a favoritos
             </Button>
-
-            {/* Remove the "BUSCAR ALTERNATIVAS" button entirely */}
           </div>
 
           {/* Delivery & Benefits */}
