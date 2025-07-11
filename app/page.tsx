@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import {
   ChevronLeft,
@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Progress } from "@/components/ui/progress"
 import ShopifyBuyButton from "@/components/shopify-buy-button"
+import { EventosPagina, inicializarTracking } from "@/lib/tracking"
 
 const productImages = [
   "1.png",
@@ -378,20 +379,33 @@ export default function ProductPage() {
   const [sizeGuideTab, setSizeGuideTab] = useState("cm")
   const [ugcCurrentSlide, setUgcCurrentSlide] = useState(0)
 
+  // Inicializar tracking quando o componente é montado
+  useEffect(() => {
+    inicializarTracking()
+  }, [])
+
   const nextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % productImages.length)
+    const newIndex = (currentImage + 1) % productImages.length
+    setCurrentImage(newIndex)
+    EventosPagina.navegacaoCarrossel('proxima', newIndex)
   }
 
   const prevImage = () => {
-    setCurrentImage((prev) => (prev - 1 + productImages.length) % productImages.length)
+    const newIndex = (currentImage - 1 + productImages.length) % productImages.length
+    setCurrentImage(newIndex)
+    EventosPagina.navegacaoCarrossel('anterior', newIndex)
   }
 
   const nextUGCSlide = () => {
-    setUgcCurrentSlide((prev) => (prev + 1) % ugcImages.length)
+    const newIndex = (ugcCurrentSlide + 1) % ugcImages.length
+    setUgcCurrentSlide(newIndex)
+    EventosPagina.ugcNavegacao('proxima')
   }
 
   const prevUGCSlide = () => {
-    setUgcCurrentSlide((prev) => (prev - 1 + ugcImages.length) % ugcImages.length)
+    const newIndex = (ugcCurrentSlide - 1 + ugcImages.length) % ugcImages.length
+    setUgcCurrentSlide(newIndex)
+    EventosPagina.ugcNavegacao('anterior')
   }
 
   const renderStars = (rating: number) => {
@@ -401,6 +415,7 @@ export default function ProductPage() {
   }
 
   const scrollToReviews = () => {
+    EventosPagina.scrollSecao('Avaliacoes')
     const reviewsElement = document.querySelector('[value="reviews"]')
     if (reviewsElement) {
       reviewsElement.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -413,16 +428,104 @@ export default function ProductPage() {
   }
 
   const scrollToProductGallery = () => {
+    EventosPagina.scrollSecao('Galeria Produto')
     const galleryElement = document.querySelector(".aspect-square")
     if (galleryElement) {
       galleryElement.scrollIntoView({ behavior: "smooth", block: "start" })
     }
   }
 
+  // Handlers com tracking
+  const handlePersonalizationChange = (value: string) => {
+    setPersonalizationType(value)
+    EventosPagina.personalizacaoSelecionada(value as 'player' | 'custom')
+  }
+
+  const handlePlayerChange = (value: string) => {
+    setSelectedPlayer(value)
+    EventosPagina.personalizacaoSelecionada('player', value)
+  }
+
+  const handleCustomNameChange = (value: string) => {
+    setCustomName(value)
+    if (value && customNumber) {
+      EventosPagina.formularioPersonalizacao(value, customNumber)
+    }
+  }
+
+  const handleCustomNumberChange = (value: string) => {
+    setCustomNumber(value)
+    if (customName && value) {
+      EventosPagina.formularioPersonalizacao(customName, value)
+    }
+  }
+
+  const handleImageClick = (index: number) => {
+    setCurrentImage(index)
+    EventosPagina.imagemProdutoClicada(index)
+  }
+
+  const handleFavoriteClick = () => {
+    EventosPagina.adicionarFavoritos()
+  }
+
+  const handleShippingClick = () => {
+    setShowShippingModal(true)
+    EventosPagina.informacoesEntrega('envio')
+  }
+
+  const handleReturnsClick = () => {
+    setShowReturnsModal(true)
+    EventosPagina.informacoesEntrega('devolucao')
+  }
+
+  const handleGiftCardClick = () => {
+    setShowGiftCardModal(true)
+    EventosPagina.informacoesEntrega('cartao_presente')
+  }
+
+  const handleReviewHelpful = (reviewId: number, helpful: boolean) => {
+    EventosPagina.reviewUtil(reviewId, helpful ? 'util' : 'nao_util')
+  }
+
+  const handleAccordionOpen = (value: string) => {
+    if (value === 'reviews') {
+      EventosPagina.avaliacoesClicadas()
+    }
+    EventosPagina.accordionAberto(value)
+  }
+
+  const handleHeaderClick = () => {
+    EventosPagina.headerClicado()
+    scrollToReviews()
+  }
+
+  const handleFooterClick = () => {
+    EventosPagina.footerClicado()
+    scrollToProductGallery()
+  }
+
+  const handleBreadcrumbClick = (item: string) => {
+    EventosPagina.breadcrumbClicado(item)
+  }
+
+  const handleUGCClick = (index: number) => {
+    EventosPagina.ugcGaleriaClicada(index)
+  }
+
+  const handleUGCProductsClick = (index: number) => {
+    EventosPagina.ugcVerProdutos(index)
+  }
+
+  const handleSizeGuideClick = () => {
+    setShowSizeGuide(true)
+    EventosPagina.guiaTamanhos()
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header Image */}
-      <div className="w-full cursor-pointer" onClick={scrollToReviews}>
+      <div className="w-full cursor-pointer" onClick={handleHeaderClick}>
         <Image
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Captura%20de%20Tela%202025-07-10%20a%CC%80s%2005.56.40-ZqIoyI8Oer0OO0EQQKa8j38vFDwIeJ.png"
           alt="Header Adidas - Jersey México"
@@ -436,11 +539,11 @@ export default function ProductPage() {
       {/* Breadcrumb */}
       <nav className="px-4 py-2 text-sm text-gray-600">
         <div className="flex items-center space-x-2">
-          <span>Inicio</span>
+          <span onClick={() => handleBreadcrumbClick('Inicio')} className="cursor-pointer hover:underline">Inicio</span>
           <span>/</span>
-          <span>Hombre</span>
+          <span onClick={() => handleBreadcrumbClick('Hombre')} className="cursor-pointer hover:underline">Hombre</span>
           <span>/</span>
-          <span>Ropa</span>
+          <span onClick={() => handleBreadcrumbClick('Ropa')} className="cursor-pointer hover:underline">Ropa</span>
         </div>
       </nav>
 
@@ -452,7 +555,8 @@ export default function ProductPage() {
               src={productImages[currentImage] || "/placeholder.svg"}
               alt="Jersey tercero Selección Nacional de México 24/25"
               fill
-              className="object-cover"
+              className="object-cover cursor-pointer"
+              onClick={() => handleImageClick(currentImage)}
             />
             {/* Personalizable Badge - Top Left */}
             <div className="absolute left-2 top-2 z-10">
@@ -486,7 +590,7 @@ export default function ProductPage() {
               <button
                 key={index}
                 className={`w-3 h-3 rounded-full ${index === currentImage ? "bg-black" : "bg-gray-300"}`}
-                onClick={() => setCurrentImage(index)}
+                onClick={() => handleImageClick(index)}
               />
             ))}
           </div>
@@ -494,12 +598,6 @@ export default function ProductPage() {
 
         {/* Product Info */}
         <div className="space-y-6">
-          {/* Remove this entire div:
-          <div>
-            <h1 className="text-2xl font-bold mb-2">JERSEY TERCERO SELECCIÓN NACIONAL DE MÉXICO 24/25</h1>
-            <p className="text-3xl font-bold">$2,799</p>
-          </div> */}
-
           {/* Personalization */}
           <Card>
             <CardContent className="p-4">
@@ -508,7 +606,7 @@ export default function ProductPage() {
                 Añade un nombre o número para personalizar tu producto adidas o crear el regalo perfecto.
               </p>
 
-              <RadioGroup value={personalizationType} onValueChange={setPersonalizationType} className="mb-4">
+              <RadioGroup value={personalizationType} onValueChange={handlePersonalizationChange} className="mb-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="player" id="player" />
                   <Label htmlFor="player">Elegir un jugador</Label>
@@ -520,7 +618,7 @@ export default function ProductPage() {
               </RadioGroup>
 
               {personalizationType === "player" ? (
-                <Select value={selectedPlayer} onValueChange={setSelectedPlayer}>
+                <Select value={selectedPlayer} onValueChange={handlePlayerChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar un jugador" />
                   </SelectTrigger>
@@ -540,7 +638,7 @@ export default function ProductPage() {
                       id="name"
                       type="text"
                       value={customName}
-                      onChange={(e) => setCustomName(e.target.value)}
+                      onChange={(e) => handleCustomNameChange(e.target.value)}
                       className="w-full p-2 border rounded-md"
                       placeholder="Ingresa el nombre"
                     />
@@ -551,7 +649,7 @@ export default function ProductPage() {
                       id="number"
                       type="text"
                       value={customNumber}
-                      onChange={(e) => setCustomNumber(e.target.value)}
+                      onChange={(e) => handleCustomNumberChange(e.target.value)}
                       className="w-full p-2 border rounded-md"
                       placeholder="Ingresa el número"
                     />
@@ -561,139 +659,19 @@ export default function ProductPage() {
             </CardContent>
           </Card>
 
-          {/* Size Selection */}
-          {/* Removido campo de seleção de tamanhos e botão 'Selecciona la talla' conforme solicitado */}
-
           {/* Add to Cart */}
           <div className="space-y-3 flex flex-col items-center">
             {/* Shopify Buy Button centralizado */}
-            <div className="w-full flex justify-center">
+            <div className="w-full max-w-xl mx-auto">
               <ShopifyBuyButton
                 productId="14705780293997"
                 storefrontAccessToken="f8b561a2fc2d25e9124114d58c0b7643"
                 domain="s1qbpp-6n.myshopify.com"
                 moneyFormat="%24%7B%7Bamount%7D%7D"
-                options={{
-                  "product": {
-                    "styles": {
-                      "product": {
-                        "@media (min-width: 601px)": {
-                          "max-width": "100%",
-                          "margin-left": "0px",
-                          "margin-bottom": "20px"
-                        }
-                      },
-                      "button": {
-                        "font-weight": "bold",
-                        ":hover": {
-                          "background-color": "#202020"
-                        },
-                        "background-color": "#131313",
-                        ":focus": {
-                          "background-color": "#202020"
-                        },
-                        "border-radius": "0px",
-                        "padding-left": "97px",
-                        "padding-right": "97px",
-                        "margin": "0 auto",
-                        "display": "block"
-                      }
-                    },
-                    "contents": {
-                      "img": false,
-                      "title": false,
-                      "price": false
-                    },
-                    "text": {
-                      "button": "Añadir al carrito"
-                    }
-                  },
-                  "productSet": {
-                    "styles": {
-                      "products": {
-                        "@media (min-width: 601px)": {
-                          "margin-left": "0px"
-                        }
-                      }
-                    }
-                  },
-                  "modalProduct": {
-                    "contents": {
-                      "img": false,
-                      "imgWithCarousel": true,
-                      "button": false,
-                      "buttonWithQuantity": true
-                    },
-                    "styles": {
-                      "product": {
-                        "@media (min-width: 601px)": {
-                          "max-width": "100%",
-                          "margin-left": "0px",
-                          "margin-bottom": "0px"
-                        }
-                      },
-                      "button": {
-                        "font-weight": "bold",
-                        ":hover": {
-                          "background-color": "#202020"
-                        },
-                        "background-color": "#131313",
-                        ":focus": {
-                          "background-color": "#202020"
-                        },
-                        "border-radius": "0px",
-                        "padding-left": "97px",
-                        "padding-right": "97px",
-                        "margin": "0 auto",
-                        "display": "block"
-                      }
-                    },
-                    "text": {
-                      "button": "Add to cart"
-                    }
-                  },
-                  "option": {},
-                  "cart": {
-                    "styles": {
-                      "button": {
-                        "font-weight": "bold",
-                        ":hover": {
-                          "background-color": "#202020"
-                        },
-                        "background-color": "#131313",
-                        ":focus": {
-                          "background-color": "#202020"
-                        },
-                        "border-radius": "0px"
-                      }
-                    },
-                    "text": {
-                      "title": "Carrito",
-                      "total": "Subtotal",
-                      "empty": "Su cesta está vacía.",
-                      "notice": "Los códigos de envío y descuento se añaden al finalizar la compra.",
-                      "button": "Checkout"
-                    }
-                  },
-                  "toggle": {
-                    "styles": {
-                      "toggle": {
-                        "font-weight": "bold",
-                        "background-color": "#131313",
-                        ":hover": {
-                          "background-color": "#202020"
-                        },
-                        ":focus": {
-                          "background-color": "#202020"
-                        }
-                      }
-                    }
-                  }
-                }}
               />
             </div>
 
-            <Button variant="outline" className="w-full bg-transparent" size="lg">
+            <Button variant="outline" className="w-full bg-transparent" size="lg" onClick={handleFavoriteClick}>
               <Heart className="w-4 h-4 mr-2" />
               Agregar a favoritos
             </Button>
@@ -704,19 +682,19 @@ export default function ProductPage() {
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2">
                 <Truck className="w-4 h-4 text-black" />
-                <button onClick={() => setShowShippingModal(true)} className="underline hover:no-underline text-left">
+                <button onClick={handleShippingClick} className="underline hover:no-underline text-left">
                   ENVÍOS GRATIS A PARTIR DE MXN $1,299
                 </button>
               </div>
               <div className="flex items-center space-x-2">
                 <RotateCcw className="w-4 h-4 text-black" />
-                <button onClick={() => setShowReturnsModal(true)} className="underline hover:no-underline text-left">
+                <button onClick={handleReturnsClick} className="underline hover:no-underline text-left">
                   DEVOLUCIONES GRATIS
                 </button>
               </div>
               <div className="flex items-center space-x-2">
                 <Gift className="w-4 h-4 text-black" />
-                <button onClick={() => setShowGiftCardModal(true)} className="underline hover:no-underline text-left">
+                <button onClick={handleGiftCardClick} className="underline hover:no-underline text-left">
                   ENVIO GRATIS PARA TARJETAS DE REGALO
                 </button>
               </div>
@@ -724,7 +702,7 @@ export default function ProductPage() {
           </div>
 
           {/* Expandable Sections */}
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full" onValueChange={handleAccordionOpen}>
             <AccordionItem value="reviews">
               <AccordionTrigger className="text-left">
                 <div className="flex items-center space-x-2">
@@ -786,11 +764,11 @@ export default function ProductPage() {
                           <span className="text-sm font-medium">{review.author}</span>
                           <div className="flex items-center space-x-4 text-sm">
                             <span>¿Útil?</span>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" onClick={() => handleReviewHelpful(review.id, true)}>
                               <ThumbsUp className="w-4 h-4 mr-1" />
                               {review.helpful}
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" onClick={() => handleReviewHelpful(review.id, false)}>
                               <ThumbsDown className="w-4 h-4 mr-1" />
                               {review.unhelpful}
                             </Button>
@@ -897,10 +875,11 @@ export default function ProductPage() {
                       >
                         {Array.from({ length: Math.ceil(ugcImages.length / 2) }, (_, slideIndex) => (
                           <div key={slideIndex} className="w-full flex-shrink-0 grid grid-cols-2 gap-4">
-                            {ugcImages.slice(slideIndex * 2, slideIndex * 2 + 2).map((image) => (
+                            {ugcImages.slice(slideIndex * 2, slideIndex * 2 + 2).map((image, index) => (
                               <div
                                 key={image.id}
                                 className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => handleUGCClick(slideIndex * 2 + index)}
                               >
                                 <div className="absolute top-2 right-2 z-10">
                                   <Instagram className="w-5 h-5 text-white" />
@@ -912,7 +891,13 @@ export default function ProductPage() {
                                   className="object-cover"
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                                  <button className="text-white text-sm underline hover:no-underline">
+                                  <button 
+                                    className="text-white text-sm underline hover:no-underline"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleUGCProductsClick(slideIndex * 2 + index)
+                                    }}
+                                  >
                                     Ver productos
                                   </button>
                                 </div>
@@ -1085,7 +1070,7 @@ export default function ProductPage() {
                       </tr>
                       <tr>
                         <th className="border border-gray-300 p-2 text-left bg-gray-50">Cadera</th>
-                        <td className="border border-gray-300 p-2">32 - 33 1/2"</td>
+                        <td className="border border-gray-300 p-2">32 1/2 - 33 1/2"</td>
                         <td className="border border-gray-300 p-2">34 - 36"</td>
                         <td className="border border-gray-300 p-2">36 1/2 - 39"</td>
                         <td className="border border-gray-300 p-2">39 1/2 - 42"</td>
@@ -1117,9 +1102,9 @@ export default function ProductPage() {
                       <tr>
                         <th className="border border-gray-300 p-2 text-left bg-gray-50">Pecho</th>
                         <td className="border border-gray-300 p-2">83 - 86cm</td>
-                        <td className="border border-gray-300 p-2">87 - 92cm</td>
-                        <td className="border border-gray-300 p-2">93 - 100cm</td>
-                        <td className="border border-gray-300 p-2">101 - 108cm</td>
+                        <td className="border border-gray-300 p-2">87 - 91cm</td>
+                        <td className="border border-gray-300 p-2">92 - 99cm</td>
+                        <td className="border border-gray-300 p-2">100 - 108cm</td>
                         <td className="border border-gray-300 p-2">109 - 118cm</td>
                         <td className="border border-gray-300 p-2">119 - 130cm</td>
                         <td className="border border-gray-300 p-2">131 - 142cm</td>
@@ -1307,7 +1292,7 @@ export default function ProductPage() {
       )}
 
       {/* Footer Section */}
-      <div className="w-full mt-0 cursor-pointer" onClick={scrollToProductGallery}>
+      <div className="w-full mt-0 cursor-pointer" onClick={handleFooterClick}>
         <Image
           src="/images/footer-adidas.png"
           alt="Footer Adidas - Tu opinión cuenta"

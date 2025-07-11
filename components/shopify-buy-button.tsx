@@ -1,11 +1,14 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { EventosBuyButton } from '@/lib/tracking'
+import { UTMManager } from '@/lib/utm-manager'
 
 declare global {
   interface Window {
     ShopifyBuy: any
     dataLayer: any
+    shopifyCart?: any
   }
 }
 
@@ -13,132 +16,256 @@ interface ShopifyBuyButtonProps {
   productId: string
   storefrontAccessToken: string
   domain: string
-  moneyFormat: string
-  options: any
-}
-
-function getUTMParams() {
-  if (typeof window === 'undefined') return {}
-  const params = new URLSearchParams(window.location.search)
-  const utms: Record<string, string> = {}
-  for (const key of params.keys()) {
-    if (key.startsWith('utm_')) {
-      utms[key] = params.get(key) || ''
-    }
-  }
-  return utms
+  moneyFormat?: string
+  options?: any
 }
 
 export default function ShopifyBuyButton({
   productId,
   storefrontAccessToken,
   domain,
-  moneyFormat,
-  options
+  moneyFormat = '${{amount}}',
+  options = {}
 }: ShopifyBuyButtonProps) {
-  useEffect(() => {
-    // Captura e salva UTM no localStorage
-    const utms = getUTMParams()
-    if (Object.keys(utms).length > 0) {
-      localStorage.setItem('utm_params', JSON.stringify(utms))
-    }
+  const componentRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    // Inicializar captura de UTMs
+    UTMManager.initializeTracking()
+
+    // URL oficial do Buy Button
     const scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js'
     
-    const loadScript = () => {
-      const script = document.createElement('script')
-      script.async = true
-      script.src = scriptURL
-      document.head.appendChild(script)
-      script.onload = ShopifyBuyInit
-    }
+    const initBuyButton = () => {
+      if (!window.ShopifyBuy) {
+        console.error('ShopifyBuy não carregado')
+        return
+      }
 
-    const ShopifyBuyInit = () => {
+      console.log('Inicializando Buy Button com UTM Manager...')
+
       const client = window.ShopifyBuy.buildClient({
         domain: domain,
-        storefrontAccessToken: storefrontAccessToken,
-        utm: getUTMParams(),
-        utm_source: 'instagram',
-        utm_medium: 'social',
-        utm_campaign: 'instagram_ad',
-        utm_content: 'instagram_ad',
-        utm_term: 'instagram_ad',
+        storefrontAccessToken: storefrontAccessToken
       })
 
-      // Recupera UTM do localStorage
-      let utmNote = ''
-      let customAttributes: any[] = []
-      try {
-        const utms = JSON.parse(localStorage.getItem('utm_params') || '{}')
-        utmNote = Object.entries(utms).map(([k, v]) => `${k}=${v}`).join('&')
-        customAttributes = Object.entries(utms).map(([k, v]) => ({ key: k, value: v }))
-      } catch {}
-
-      window.ShopifyBuy.UI.onReady(client).then(function (ui: any) {
-        ui.createComponent('product', {
+      window.ShopifyBuy.UI.onReady(client).then((ui: any) => {
+        console.log('Buy Button UI ready')
+        
+        // Evento: Botão carregado
+        EventosBuyButton.botaoCarregado()
+        
+        // Configurações do Buy Button oficial com UTM Manager
+        const component = ui.createComponent('product', {
           id: productId,
-          node: document.getElementById('product-component-1752142215746'),
+          node: componentRef.current,
           moneyFormat: moneyFormat,
           options: {
-            ...options,
-            cart: {
-              ...options.cart,
-              events: {
-                ...options.cart?.events,
-                afterInit: function(cart: any) {
-                  // MutationObserver para garantir que o listener seja sempre adicionado
-                  const observer = new MutationObserver(() => {
-                    const checkoutBtn = document.querySelector('.shopify-buy__cart__footer__checkout');
-                    if (checkoutBtn && !checkoutBtn.hasAttribute('data-utm-listener')) {
-                      checkoutBtn.setAttribute('data-utm-listener', 'true');
-                      checkoutBtn.addEventListener('click', function (e: any) {
-                        e.preventDefault();
-                        // Pega a URL de checkout original
-                        const checkoutUrl = cart && cart.checkoutUrl ? cart.checkoutUrl : '';
-                        // Pega as UTMs da URL atual
-                        const params = new URLSearchParams(window.location.search);
-                        const utms: string[] = [];
-                        for (const [key, value] of params.entries()) {
-                          if (key.startsWith('utm_')) {
-                            utms.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-                          }
-                        }
-                        let finalUrl = checkoutUrl;
-                        if (utms.length > 0) {
-                          finalUrl += (checkoutUrl.includes('?') ? '&' : '?') + utms.join('&');
-                        }
-                        window.location.href = finalUrl;
-                        // Opcional: desconectar observer após o clique
-                        observer.disconnect();
-                      }, { once: true });
-                    }
-                  });
-                  observer.observe(document.body, { childList: true, subtree: true });
+            product: {
+              styles: {
+                product: {
+                  "@media (min-width: 601px)": {
+                    "max-width": "100%",
+                    "margin-left": "auto",
+                    "margin-right": "auto",
+                    "margin-bottom": "20px",
+                    "text-align": "center"
+                  },
+                  "text-align": "center",
+                  "width": "100%"
                 },
-                afterAddVariantToCart: function(lineItem: any, cart: any) {
-                  // Evento AddToCart
-                  if (window.dataLayer) {
-                    window.dataLayer.push({ event: 'AddToCart' })
+                button: {
+                  "font-weight": "bold",
+                  ":hover": {
+                    "background-color": "#202020"
+                  },
+                  "background-color": "#131313",
+                  ":focus": {
+                    "background-color": "#202020"
+                  },
+                  "border-radius": "40px",
+                  "padding-left": "95px",
+                  "padding-right": "95px"
+                }
+              },
+              contents: {
+                img: false,
+                title: false,
+                price: false
+              },
+              text: {
+                button: "Añadir al carrito"
+              }
+            },
+            productSet: {
+              styles: {
+                products: {
+                  "@media (min-width: 601px)": {
+                    "margin-left": "-20px"
                   }
                 }
               }
             },
-            // Não envia mais UTM por note ou customAttributes
-          },
-        })
+            modalProduct: {
+              contents: {
+                img: false,
+                imgWithCarousel: true,
+                button: false,
+                buttonWithQuantity: true
+              },
+              styles: {
+                product: {
+                  "@media (min-width: 601px)": {
+                    "max-width": "100%",
+                    "margin-left": "0px",
+                    "margin-bottom": "0px"
+                  }
+                },
+                button: {
+                  "font-weight": "bold",
+                  ":hover": {
+                    "background-color": "#202020"
+                  },
+                  "background-color": "#131313",
+                  ":focus": {
+                    "background-color": "#202020"
+                  },
+                  "border-radius": "40px",
+                  "padding-left": "95px",
+                  "padding-right": "95px"
+                }
+              },
+              text: {
+                button: "Add to cart"
+              }
+            },
+            option: {},
+            cart: {
+              styles: {
+                button: {
+                  "font-weight": "bold",
+                  ":hover": {
+                    "background-color": "#202020"
+                  },
+                  "background-color": "#131313",
+                  ":focus": {
+                    "background-color": "#202020"
+                  },
+                  "border-radius": "40px"
+                }
+              },
+              text: {
+                total: "Subtotal",
+                button: "Checkout"
+              },
+              popup: false,
+              events: {
+                afterInit: function(cart: any) {
+                  cart.onCheckout = () => {
+                    try {
+                      // Capturar UTMs atuais
+                      const currentUTMs = UTMManager.getAllUTMs()
+                      console.log('UTMs capturados:', currentUTMs)
+                      
+                      // Construir URL do checkout com UTMs
+                      const checkoutUrl = cart.model.webUrl
+                      if (!checkoutUrl) {
+                        console.error('URL do checkout não encontrada')
+                        return true
+                      }
+                      
+                      // Adicionar UTMs à URL
+                      const finalUrl = UTMManager.addUTMsToCheckoutURL(checkoutUrl, currentUTMs)
+                      console.log('URL final com UTMs:', finalUrl)
+                      
+                      // Forçar redirecionamento com delay
+                      setTimeout(() => {
+                        window.location.href = finalUrl
+                      }, 500)
+                      return false
+                    } catch (error) {
+                      console.error('Erro ao processar checkout:', error)
+                      return true
+                    }
+                  }
+                }
+              }
+            },
+            toggle: {
+              styles: {
+                toggle: {
+                  "font-weight": "bold",
+                  "background-color": "#131313",
+                  ":hover": {
+                    "background-color": "#202020"
+                  },
+                  ":focus": {
+                    "background-color": "#202020"
+                  }
+                }
+              }
+            }
+          }
+        });
+        
+        console.log('Buy Button component criado com UTM Manager')
+      }).catch((error: any) => {
+        console.error('Erro ao criar Buy Button:', error)
       })
     }
 
-    if (window.ShopifyBuy) {
-      if (window.ShopifyBuy.UI) {
-        ShopifyBuyInit()
-      } else {
-        loadScript()
+    const loadScript = () => {
+      // Verificar se já está carregado
+      if (window.ShopifyBuy) {
+        console.log('ShopifyBuy já carregado, inicializando...')
+        initBuyButton()
+        return
       }
-    } else {
-      loadScript()
+
+      // Verificar se script já existe
+      if (document.querySelector(`script[src="${scriptURL}"]`)) {
+        console.log('Script já existe, aguardando carregamento...')
+        return
+      }
+
+      console.log('Carregando script do Buy Button...')
+      const script = document.createElement('script')
+      script.async = true
+      script.src = scriptURL
+      script.onload = () => {
+        console.log('Script carregado com sucesso')
+        initBuyButton()
+      }
+      script.onerror = () => {
+        console.error('Erro ao carregar o Buy Button script')
+      }
+      document.head.appendChild(script)
+    }
+
+    loadScript()
+
+    // Inicializar interceptadores globais do UTMManager
+    UTMManager.interceptCheckoutLinks()
+
+    // Cleanup
+    return () => {
+      if (componentRef.current) {
+        componentRef.current.innerHTML = ''
+      }
     }
   }, [productId, storefrontAccessToken, domain, moneyFormat, options])
 
-  return <div id='product-component-1752142215746'></div>
+  return (
+    <div 
+      style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center'
+      }}
+    >
+      <div ref={componentRef} id="shopify-buy-button-container" style={{ width: '100%' }}></div>
+    </div>
+  )
 } 
