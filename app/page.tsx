@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,60 +16,71 @@ import {
   ThumbsDown,
   Flag,
   Instagram,
-} from "lucide-react"
+} from 'lucide-react';
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Progress } from "@/components/ui/progress"
-import ShopifyBuyButton from "@/components/shopify-buy-button"
-import { EventosPagina, inicializarTracking } from "@/lib/tracking"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Progress } from '@/components/ui/progress';
+import ShopifyBuyButton from '@/components/shopify-buy-button';
+import { EventosPagina, inicializarTracking } from '@/lib/tracking';
 
 const productImages = [
-  "1.png",
-  "2.png",
-  "3.png",
-  "4.png",
-  "5.png",
-  "6.png",
-  "7.png",
-]
+  '1.png',
+  '2.png',
+  '3.png',
+  '4.png',
+  '5.png',
+  '6.png',
+  '7.png',
+];
 
 const players = [
-  "A.VEGA 10",
-  "C.HUERTA 21",
-  "E.ÁLVAREZ 4",
-  "J.QUIÑONES 16",
-  "L.CHÁVEZ 18",
-  "L.ROMO 7",
-  "ORBELÍN 17",
-  "R.ALVARADO 22",
-  "RAÚL 9",
-  "S.GIMENEZ 11",
-]
+  'A.VEGA 10',
+  'C.HUERTA 21',
+  'E.ÁLVAREZ 4',
+  'J.QUIÑONES 16',
+  'L.CHÁVEZ 18',
+  'L.ROMO 7',
+  'ORBELÍN 17',
+  'R.ALVARADO 22',
+  'RAÚL 9',
+  'S.GIMENEZ 11',
+];
 
 const sizes = [
-  { size: "XS", available: true },
-  { size: "S", available: true },
-  { size: "M", available: true },
-  { size: "L", available: true },
-  { size: "XL", available: true },
-  { size: "2XL", available: true },
-  { size: "3XL", available: true },
-]
+  { size: 'XS', available: true },
+  { size: 'S', available: true },
+  { size: 'M', available: true },
+  { size: 'L', available: true },
+  { size: 'XL', available: true },
+  { size: '2XL', available: true },
+  { size: '3XL', available: true },
+];
 
 const reviews = [
   {
     id: 1,
     rating: 5,
-    title: "La camiseta es hermosa",
+    title: 'La camiseta es hermosa',
     content:
-      "Los detalles dorados se ven increíbles y el material es muy cómodo. La compré para mi hermano y ahora quiero una para mí también.",
-    author: "Mariana G.",
+      'Los detalles dorados se ven increíbles y el material es muy cómodo. La compré para mi hermano y ahora quiero una para mí también.',
+    author: 'Mariana G.',
     helpful: 47,
     unhelpful: 2,
     verified: true,
@@ -77,9 +88,10 @@ const reviews = [
   {
     id: 2,
     rating: 5,
-    title: "No pensé que me fuera a emocionar tanto",
-    content: "Se nota que es de colección. Me llegó en 4 días y todo perfecto. Muy feliz con la compra.",
-    author: "Luis E.",
+    title: 'No pensé que me fuera a emocionar tanto',
+    content:
+      'Se nota que es de colección. Me llegó en 4 días y todo perfecto. Muy feliz con la compra.',
+    author: 'Luis E.',
     helpful: 0,
     unhelpful: 0,
     verified: true,
@@ -87,9 +99,10 @@ const reviews = [
   {
     id: 3,
     rating: 5,
-    title: "Es justo como se ve en las fotos",
-    content: "Ajusta bien, no es caliente y los colores se ven increíbles en persona. Mi esposo la amó.",
-    author: "Carla M.",
+    title: 'Es justo como se ve en las fotos',
+    content:
+      'Ajusta bien, no es caliente y los colores se ven increíbles en persona. Mi esposo la amó.',
+    author: 'Carla M.',
     helpful: 23,
     unhelpful: 1,
     verified: false,
@@ -97,430 +110,447 @@ const reviews = [
   {
     id: 4,
     rating: 5,
-    title: "La calidad es de otro nivel",
+    title: 'La calidad es de otro nivel',
     content:
-      "Es ligera, se siente fresca y los detalles del escudo dorado están brutales. Me preguntan dónde la compré cada vez que la uso.",
-    author: "Andrés H.",
+      'Es ligera, se siente fresca y los detalles del escudo dorado están brutales. Me preguntan dónde la compré cada vez que la uso.',
+    author: 'Andrés H.',
     helpful: 89,
     unhelpful: 3,
   },
   {
     id: 5,
     rating: 5,
-    title: "Llegó rápido y es 100% original",
+    title: 'Llegó rápido y es 100% original',
     content:
-      "La pedí con miedo de que tardara o fuera falsa, pero llegó rápido y es 100% original. Estoy muy satisfecha.",
-    author: "Paola R.",
+      'La pedí con miedo de que tardara o fuera falsa, pero llegó rápido y es 100% original. Estoy muy satisfecha.',
+    author: 'Paola R.',
     helpful: 12,
     unhelpful: 0,
   },
   {
     id: 6,
     rating: 5,
-    title: "Por fin algo que representa bien a México",
-    content: "Me encantó todo: el diseño, el mensaje, la calidad. Gracias por hacer esto posible.",
-    author: "Jorge A.",
+    title: 'Por fin algo que representa bien a México',
+    content:
+      'Me encantó todo: el diseño, el mensaje, la calidad. Gracias por hacer esto posible.',
+    author: 'Jorge A.',
     helpful: 156,
     unhelpful: 4,
   },
   {
     id: 7,
     rating: 5,
-    title: "Me sorprendió lo rápido que llegó",
-    content: "Lo bien que viene empacada. Es elegante y diferente a cualquier camiseta que tenga.",
-    author: "Valeria D.",
+    title: 'Me sorprendió lo rápido que llegó',
+    content:
+      'Lo bien que viene empacada. Es elegante y diferente a cualquier camiseta que tenga.',
+    author: 'Valeria D.',
     helpful: 8,
     unhelpful: 1,
   },
   {
     id: 8,
     rating: 5,
-    title: "La camiseta sí es distinta",
-    content: "Ligera, de alta gama y el escudo en dorado es precioso.",
-    author: "Fernando Z.",
+    title: 'La camiseta sí es distinta',
+    content: 'Ligera, de alta gama y el escudo en dorado es precioso.',
+    author: 'Fernando Z.',
     helpful: 34,
     unhelpful: 0,
   },
   {
     id: 9,
     rating: 5,
-    title: "Le regalé esta camiseta a mi novio",
-    content: "Se emocionó muchísimo. Dice que es la mejor que ha tenido.",
-    author: "Isabel T.",
+    title: 'Le regalé esta camiseta a mi novio',
+    content: 'Se emocionó muchísimo. Dice que es la mejor que ha tenido.',
+    author: 'Isabel T.',
     helpful: 0,
     unhelpful: 0,
   },
   {
     id: 10,
     rating: 5,
-    title: "Orgullo puro cada vez que la uso",
-    content: "No soy mucho de dejar reseñas, pero esta camiseta lo merece. ¡Arriba México!",
-    author: "Mateo S.",
+    title: 'Orgullo puro cada vez que la uso',
+    content:
+      'No soy mucho de dejar reseñas, pero esta camiseta lo merece. ¡Arriba México!',
+    author: 'Mateo S.',
     helpful: 203,
     unhelpful: 7,
   },
   {
     id: 11,
     rating: 5,
-    title: "Es elegante y representa bien a nuestro país",
-    content: "La pedí con miedo, pero al abrir el paquete supe que valió la pena.",
-    author: "Renata V.",
+    title: 'Es elegante y representa bien a nuestro país',
+    content:
+      'La pedí con miedo, pero al abrir el paquete supe que valió la pena.',
+    author: 'Renata V.',
     helpful: 5,
     unhelpful: 0,
   },
   {
     id: 12,
     rating: 5,
-    title: "Se siente profesional, como de jugador real",
-    content: "He comprado muchas camisetas de fútbol, pero esta es otra cosa.",
-    author: "Marco A.",
+    title: 'Se siente profesional, como de jugador real',
+    content: 'He comprado muchas camisetas de fútbol, pero esta es otra cosa.',
+    author: 'Marco A.',
     helpful: 67,
     unhelpful: 2,
   },
   {
     id: 13,
     rating: 5,
-    title: "Regalazo para mi hermano",
-    content: "La reacción de él cuando la vio no tiene precio.",
-    author: "Alejandra P.",
+    title: 'Regalazo para mi hermano',
+    content: 'La reacción de él cuando la vio no tiene precio.',
+    author: 'Alejandra P.',
     helpful: 18,
     unhelpful: 0,
   },
   {
     id: 14,
     rating: 5,
-    title: "Es original de verdad",
-    content: "Es liviana, fresca y los acabados son muy finos. Nada que ver con copias baratas.",
-    author: "Tomás C.",
+    title: 'Es original de verdad',
+    content:
+      'Es liviana, fresca y los acabados son muy finos. Nada que ver con copias baratas.',
+    author: 'Tomás C.',
     helpful: 91,
     unhelpful: 1,
   },
   {
     id: 15,
     rating: 5,
-    title: "No me esperaba que brillara tanto el dorado",
-    content: "Ya la lavé y sigue como nueva.",
-    author: "Camila N.",
+    title: 'No me esperaba que brillara tanto el dorado',
+    content: 'Ya la lavé y sigue como nueva.',
+    author: 'Camila N.',
     helpful: 3,
     unhelpful: 0,
   },
   {
     id: 16,
     rating: 5,
-    title: "La mejor edición que han sacado",
-    content: "Me siento parte de la historia con esta camiseta. Gracias por hacerlo posible.",
-    author: "Daniel L.",
+    title: 'La mejor edición que han sacado',
+    content:
+      'Me siento parte de la historia con esta camiseta. Gracias por hacerlo posible.',
+    author: 'Daniel L.',
     helpful: 124,
     unhelpful: 5,
   },
   {
     id: 17,
     rating: 5,
-    title: "Fácil de pedir, rápido el envío",
-    content: "La calidad es excelente. ¡Arriba la selección!",
-    author: "Julieta M.",
+    title: 'Fácil de pedir, rápido el envío',
+    content: 'La calidad es excelente. ¡Arriba la selección!',
+    author: 'Julieta M.',
     helpful: 0,
     unhelpful: 0,
   },
   {
     id: 18,
     rating: 5,
-    title: "Me sorprendió el empaque y la atención",
-    content: "Y ni hablar de la camiseta: de lujo. Se nota que es edición especial.",
-    author: "Iván F.",
+    title: 'Me sorprendió el empaque y la atención',
+    content:
+      'Y ni hablar de la camiseta: de lujo. Se nota que es edición especial.',
+    author: 'Iván F.',
     helpful: 42,
     unhelpful: 1,
   },
   {
     id: 19,
     rating: 5,
-    title: "La vi en un anuncio y no pude resistirme",
-    content: "Cuando llegó, confirmé que había hecho bien. Es preciosa.",
-    author: "Mónica A.",
+    title: 'La vi en un anuncio y no pude resistirme',
+    content: 'Cuando llegó, confirmé que había hecho bien. Es preciosa.',
+    author: 'Mónica A.',
     helpful: 15,
     unhelpful: 0,
   },
   {
     id: 20,
     rating: 5,
-    title: "El diseño está brutal",
-    content: "Me la llevé al estadio y varios me preguntaron dónde la conseguí.",
-    author: "Sergio H.",
+    title: 'El diseño está brutal',
+    content:
+      'Me la llevé al estadio y varios me preguntaron dónde la conseguí.',
+    author: 'Sergio H.',
     helpful: 78,
     unhelpful: 2,
   },
   {
     id: 21,
     rating: 5,
-    title: "No conocía esta tienda y me daba miedo",
-    content: "Pero fue todo seguro. Llegó puntual y la camiseta es una joya.",
-    author: "Liliana E.",
+    title: 'No conocía esta tienda y me daba miedo',
+    content: 'Pero fue todo seguro. Llegó puntual y la camiseta es una joya.',
+    author: 'Liliana E.',
     helpful: 29,
     unhelpful: 0,
   },
   {
     id: 22,
     rating: 5,
-    title: "El corte, el tejido, el dorado… todo está cuidado",
-    content: "Se siente premium. Muy feliz con la compra.",
-    author: "Ernesto G.",
+    title: 'El corte, el tejido, el dorado… todo está cuidado',
+    content: 'Se siente premium. Muy feliz con la compra.',
+    author: 'Ernesto G.',
     helpful: 0,
     unhelpful: 0,
   },
   {
     id: 23,
     rating: 5,
-    title: "Me gusta porque no es solo bonita, también es cómoda",
-    content: "Se ajusta bien y se ve elegante.",
-    author: "Daniela S.",
+    title: 'Me gusta porque no es solo bonita, también es cómoda',
+    content: 'Se ajusta bien y se ve elegante.',
+    author: 'Daniela S.',
     helpful: 36,
     unhelpful: 1,
   },
   {
     id: 24,
     rating: 5,
-    title: "Perfecta. Ni una sola costura mal hecha",
-    content: "Producto 100% original y de colección.",
-    author: "Rafael O.",
+    title: 'Perfecta. Ni una sola costura mal hecha',
+    content: 'Producto 100% original y de colección.',
+    author: 'Rafael O.',
     helpful: 183,
     unhelpful: 6,
   },
   {
     id: 25,
     rating: 5,
-    title: "La compré para mi papá",
-    content: "Me dijo que era la mejor camiseta de la selección que ha tenido. Muy agradecida.",
-    author: "Fernanda R.",
+    title: 'La compré para mi papá',
+    content:
+      'Me dijo que era la mejor camiseta de la selección que ha tenido. Muy agradecida.',
+    author: 'Fernanda R.',
     helpful: 7,
     unhelpful: 0,
   },
   {
     id: 26,
     rating: 5,
-    title: "Cuando abrí el paquete, no lo podía creer",
-    content: "El escudo dorado es increíble y la calidad se siente profesional.",
-    author: "Esteban R.",
+    title: 'Cuando abrí el paquete, no lo podía creer',
+    content:
+      'El escudo dorado es increíble y la calidad se siente profesional.',
+    author: 'Esteban R.',
     helpful: 52,
     unhelpful: 0,
   },
   {
     id: 27,
     rating: 5,
-    title: "Muy cómoda, no pica, no aprieta",
-    content: "Y además se ve hermosa. Mi esposo quedó fascinado.",
-    author: "Rosa C.",
+    title: 'Muy cómoda, no pica, no aprieta',
+    content: 'Y además se ve hermosa. Mi esposo quedó fascinado.',
+    author: 'Rosa C.',
     helpful: 21,
     unhelpful: 1,
   },
   {
     id: 28,
     rating: 5,
-    title: "Es como tener una camiseta edición de jugador",
-    content: "La textura, el corte, el diseño… todo 10/10.",
-    author: "Alan V.",
+    title: 'Es como tener una camiseta edición de jugador',
+    content: 'La textura, el corte, el diseño… todo 10/10.',
+    author: 'Alan V.',
     helpful: 95,
     unhelpful: 3,
   },
   {
     id: 29,
     rating: 5,
-    title: "Fácil de pedir, envío rápido",
-    content: "Llegó en excelente estado. Se siente como una prenda de lujo.",
-    author: "Diana T.",
+    title: 'Fácil de pedir, envío rápido',
+    content: 'Llegó en excelente estado. Se siente como una prenda de lujo.',
+    author: 'Diana T.',
     helpful: 0,
     unhelpful: 0,
   },
   {
     id: 30,
     rating: 5,
-    title: "No sabía qué esperar",
-    content: "Pero me llevé una grata sorpresa. La mejor camiseta que tengo.",
-    author: "Mateo I.",
+    title: 'No sabía qué esperar',
+    content: 'Pero me llevé una grata sorpresa. La mejor camiseta que tengo.',
+    author: 'Mateo I.',
     helpful: 14,
     unhelpful: 0,
   },
-]
+];
 
 const ugcImages = [
   {
     id: 1,
-    src: "https://photorankmedia-a.akamaihd.net/media/f/u/n/funqc/normal.jpg",
-    alt: "Usuario usando jersey México",
+    src: 'https://photorankmedia-a.akamaihd.net/media/f/u/n/funqc/normal.jpg',
+    alt: 'Usuario usando jersey México',
   },
   {
     id: 2,
-    src: "https://photorankmedia-a.akamaihd.net/media/k/x/b/kxbh/normal.jpg",
-    alt: "Usuario usando jersey México",
+    src: 'https://photorankmedia-a.akamaihd.net/media/k/x/b/kxbh/normal.jpg',
+    alt: 'Usuario usando jersey México',
   },
   {
     id: 3,
-    src: "/placeholder.svg?height=300&width=300&text=Instagram+Post",
-    alt: "Post de Instagram",
+    src: '/placeholder.svg?height=300&width=300&text=Instagram+Post',
+    alt: 'Post de Instagram',
   },
   {
     id: 4,
-    src: "/placeholder.svg?height=300&width=300&text=Instagram+Post",
-    alt: "Post de Instagram",
+    src: '/placeholder.svg?height=300&width=300&text=Instagram+Post',
+    alt: 'Post de Instagram',
   },
-]
+];
 
 export default function ProductPage() {
-  const [currentImage, setCurrentImage] = useState(0)
-  const [selectedSize, setSelectedSize] = useState("")
-  const [personalizationType, setPersonalizationType] = useState("player")
-  const [selectedPlayer, setSelectedPlayer] = useState("")
-  const [customName, setCustomName] = useState("")
-  const [customNumber, setCustomNumber] = useState("")
-  const [showSizeGuide, setShowSizeGuide] = useState(false)
-  const [showShippingModal, setShowShippingModal] = useState(false)
-  const [showReturnsModal, setShowReturnsModal] = useState(false)
-  const [showGiftCardModal, setShowGiftCardModal] = useState(false)
-  const [showUGCModal, setShowUGCModal] = useState(false)
-  const [sizeGuideTab, setSizeGuideTab] = useState("cm")
-  const [ugcCurrentSlide, setUgcCurrentSlide] = useState(0)
+  const [currentImage, setCurrentImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [personalizationType, setPersonalizationType] = useState('player');
+  const [selectedPlayer, setSelectedPlayer] = useState('');
+  const [customName, setCustomName] = useState('');
+  const [customNumber, setCustomNumber] = useState('');
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [showShippingModal, setShowShippingModal] = useState(false);
+  const [showReturnsModal, setShowReturnsModal] = useState(false);
+  const [showGiftCardModal, setShowGiftCardModal] = useState(false);
+  const [showUGCModal, setShowUGCModal] = useState(false);
+  const [sizeGuideTab, setSizeGuideTab] = useState('cm');
+  const [ugcCurrentSlide, setUgcCurrentSlide] = useState(0);
 
   // Inicializar tracking quando o componente é montado
   useEffect(() => {
-    inicializarTracking()
-  }, [])
+    inicializarTracking();
+  }, []);
 
   const nextImage = () => {
-    const newIndex = (currentImage + 1) % productImages.length
-    setCurrentImage(newIndex)
-    EventosPagina.navegacaoCarrossel('proxima', newIndex)
-  }
+    const newIndex = (currentImage + 1) % productImages.length;
+    setCurrentImage(newIndex);
+    EventosPagina.navegacaoCarrossel('proxima', newIndex);
+  };
 
   const prevImage = () => {
-    const newIndex = (currentImage - 1 + productImages.length) % productImages.length
-    setCurrentImage(newIndex)
-    EventosPagina.navegacaoCarrossel('anterior', newIndex)
-  }
+    const newIndex =
+      (currentImage - 1 + productImages.length) % productImages.length;
+    setCurrentImage(newIndex);
+    EventosPagina.navegacaoCarrossel('anterior', newIndex);
+  };
 
   const nextUGCSlide = () => {
-    const newIndex = (ugcCurrentSlide + 1) % ugcImages.length
-    setUgcCurrentSlide(newIndex)
-    EventosPagina.ugcNavegacao('proxima')
-  }
+    const newIndex = (ugcCurrentSlide + 1) % ugcImages.length;
+    setUgcCurrentSlide(newIndex);
+    EventosPagina.ugcNavegacao('proxima');
+  };
 
   const prevUGCSlide = () => {
-    const newIndex = (ugcCurrentSlide - 1 + ugcImages.length) % ugcImages.length
-    setUgcCurrentSlide(newIndex)
-    EventosPagina.ugcNavegacao('anterior')
-  }
+    const newIndex =
+      (ugcCurrentSlide - 1 + ugcImages.length) % ugcImages.length;
+    setUgcCurrentSlide(newIndex);
+    EventosPagina.ugcNavegacao('anterior');
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
-    ))
-  }
+      <Star
+        key={i}
+        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+      />
+    ));
+  };
 
   const scrollToReviews = () => {
-    EventosPagina.scrollSecao('Avaliacoes')
-    const reviewsElement = document.querySelector('[value="reviews"]')
+    EventosPagina.scrollSecao('Avaliacoes');
+    const reviewsElement = document.querySelector('[value="reviews"]');
     if (reviewsElement) {
-      reviewsElement.scrollIntoView({ behavior: "smooth", block: "start" })
+      reviewsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       // Open the reviews accordion if it's closed
-      const reviewsAccordion = reviewsElement.querySelector('[data-state="closed"]') as HTMLElement
+      const reviewsAccordion = reviewsElement.querySelector(
+        '[data-state="closed"]'
+      ) as HTMLElement;
       if (reviewsAccordion) {
-        reviewsAccordion.click()
+        reviewsAccordion.click();
       }
     }
-  }
+  };
 
   const scrollToProductGallery = () => {
-    EventosPagina.scrollSecao('Galeria Produto')
-    const galleryElement = document.querySelector(".aspect-square")
+    EventosPagina.scrollSecao('Galeria Produto');
+    const galleryElement = document.querySelector('.aspect-square');
     if (galleryElement) {
-      galleryElement.scrollIntoView({ behavior: "smooth", block: "start" })
+      galleryElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }
+  };
 
   // Handlers com tracking
   const handlePersonalizationChange = (value: string) => {
-    setPersonalizationType(value)
-    EventosPagina.personalizacaoSelecionada(value as 'player' | 'custom')
-  }
+    setPersonalizationType(value);
+    EventosPagina.personalizacaoSelecionada(value as 'player' | 'custom');
+  };
 
   const handlePlayerChange = (value: string) => {
-    setSelectedPlayer(value)
-    EventosPagina.personalizacaoSelecionada('player', value)
-  }
+    setSelectedPlayer(value);
+    EventosPagina.personalizacaoSelecionada('player', value);
+  };
 
   const handleCustomNameChange = (value: string) => {
-    setCustomName(value)
+    setCustomName(value);
     if (value && customNumber) {
-      EventosPagina.formularioPersonalizacao(value, customNumber)
+      EventosPagina.formularioPersonalizacao(value, customNumber);
     }
-  }
+  };
 
   const handleCustomNumberChange = (value: string) => {
-    setCustomNumber(value)
+    setCustomNumber(value);
     if (customName && value) {
-      EventosPagina.formularioPersonalizacao(customName, value)
+      EventosPagina.formularioPersonalizacao(customName, value);
     }
-  }
+  };
 
   const handleImageClick = (index: number) => {
-    setCurrentImage(index)
-    EventosPagina.imagemProdutoClicada(index)
-  }
+    setCurrentImage(index);
+    EventosPagina.imagemProdutoClicada(index);
+  };
 
   const handleFavoriteClick = () => {
-    EventosPagina.adicionarFavoritos()
-  }
+    EventosPagina.adicionarFavoritos();
+  };
 
   const handleShippingClick = () => {
-    setShowShippingModal(true)
-    EventosPagina.informacoesEntrega('envio')
-  }
+    setShowShippingModal(true);
+    EventosPagina.informacoesEntrega('envio');
+  };
 
   const handleReturnsClick = () => {
-    setShowReturnsModal(true)
-    EventosPagina.informacoesEntrega('devolucao')
-  }
+    setShowReturnsModal(true);
+    EventosPagina.informacoesEntrega('devolucao');
+  };
 
   const handleGiftCardClick = () => {
-    setShowGiftCardModal(true)
-    EventosPagina.informacoesEntrega('cartao_presente')
-  }
+    setShowGiftCardModal(true);
+    EventosPagina.informacoesEntrega('cartao_presente');
+  };
 
   const handleReviewHelpful = (reviewId: number, helpful: boolean) => {
-    EventosPagina.reviewUtil(reviewId, helpful ? 'util' : 'nao_util')
-  }
+    EventosPagina.reviewUtil(reviewId, helpful ? 'util' : 'nao_util');
+  };
 
   const handleAccordionOpen = (value: string) => {
     if (value === 'reviews') {
-      EventosPagina.avaliacoesClicadas()
+      EventosPagina.avaliacoesClicadas();
     }
-    EventosPagina.accordionAberto(value)
-  }
+    EventosPagina.accordionAberto(value);
+  };
 
   const handleHeaderClick = () => {
-    EventosPagina.headerClicado()
-    scrollToReviews()
-  }
+    EventosPagina.headerClicado();
+    scrollToReviews();
+  };
 
   const handleFooterClick = () => {
-    EventosPagina.footerClicado()
-    scrollToProductGallery()
-  }
+    EventosPagina.footerClicado();
+    scrollToProductGallery();
+  };
 
   const handleBreadcrumbClick = (item: string) => {
-    EventosPagina.breadcrumbClicado(item)
-  }
+    EventosPagina.breadcrumbClicado(item);
+  };
 
   const handleUGCClick = (index: number) => {
-    EventosPagina.ugcGaleriaClicada(index)
-  }
+    EventosPagina.ugcGaleriaClicada(index);
+  };
 
   const handleUGCProductsClick = (index: number) => {
-    EventosPagina.ugcVerProdutos(index)
-  }
+    EventosPagina.ugcVerProdutos(index);
+  };
 
   const handleSizeGuideClick = () => {
-    setShowSizeGuide(true)
-    EventosPagina.guiaTamanhos()
-  }
+    setShowSizeGuide(true);
+    EventosPagina.guiaTamanhos();
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -539,11 +569,26 @@ export default function ProductPage() {
       {/* Breadcrumb */}
       <nav className="px-4 py-2 text-sm text-gray-600">
         <div className="flex items-center space-x-2">
-          <span onClick={() => handleBreadcrumbClick('Inicio')} className="cursor-pointer hover:underline">Inicio</span>
+          <span
+            onClick={() => handleBreadcrumbClick('Inicio')}
+            className="cursor-pointer hover:underline"
+          >
+            Inicio
+          </span>
           <span>/</span>
-          <span onClick={() => handleBreadcrumbClick('Hombre')} className="cursor-pointer hover:underline">Hombre</span>
+          <span
+            onClick={() => handleBreadcrumbClick('Hombre')}
+            className="cursor-pointer hover:underline"
+          >
+            Hombre
+          </span>
           <span>/</span>
-          <span onClick={() => handleBreadcrumbClick('Ropa')} className="cursor-pointer hover:underline">Ropa</span>
+          <span
+            onClick={() => handleBreadcrumbClick('Ropa')}
+            className="cursor-pointer hover:underline"
+          >
+            Ropa
+          </span>
         </div>
       </nav>
 
@@ -552,7 +597,7 @@ export default function ProductPage() {
         <div className="relative mb-6">
           <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <Image
-              src={productImages[currentImage] || "/placeholder.svg"}
+              src={productImages[currentImage] || '/placeholder.svg'}
               alt="Jersey tercero Selección Nacional de México 24/25"
               fill
               className="object-cover cursor-pointer"
@@ -589,7 +634,7 @@ export default function ProductPage() {
             {productImages.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full ${index === currentImage ? "bg-black" : "bg-gray-300"}`}
+                className={`w-3 h-3 rounded-full ${index === currentImage ? 'bg-black' : 'bg-gray-300'}`}
                 onClick={() => handleImageClick(index)}
               />
             ))}
@@ -603,10 +648,15 @@ export default function ProductPage() {
             <CardContent className="p-4">
               <h3 className="font-semibold mb-3">Personalizar</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Añade un nombre o número para personalizar tu producto adidas o crear el regalo perfecto.
+                Añade un nombre o número para personalizar tu producto adidas o
+                crear el regalo perfecto.
               </p>
 
-              <RadioGroup value={personalizationType} onValueChange={handlePersonalizationChange} className="mb-4">
+              <RadioGroup
+                value={personalizationType}
+                onValueChange={handlePersonalizationChange}
+                className="mb-4"
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="player" id="player" />
                   <Label htmlFor="player">Elegir un jugador</Label>
@@ -617,8 +667,11 @@ export default function ProductPage() {
                 </div>
               </RadioGroup>
 
-              {personalizationType === "player" ? (
-                <Select value={selectedPlayer} onValueChange={handlePlayerChange}>
+              {personalizationType === 'player' ? (
+                <Select
+                  value={selectedPlayer}
+                  onValueChange={handlePlayerChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar un jugador" />
                   </SelectTrigger>
@@ -671,7 +724,12 @@ export default function ProductPage() {
               />
             </div>
 
-            <Button variant="outline" className="w-full bg-transparent" size="lg" onClick={handleFavoriteClick}>
+            <Button
+              variant="outline"
+              className="w-full bg-transparent"
+              size="lg"
+              onClick={handleFavoriteClick}
+            >
               <Heart className="w-4 h-4 mr-2" />
               Agregar a favoritos
             </Button>
@@ -682,19 +740,28 @@ export default function ProductPage() {
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2">
                 <Truck className="w-4 h-4 text-black" />
-                <button onClick={handleShippingClick} className="underline hover:no-underline text-left">
+                <button
+                  onClick={handleShippingClick}
+                  className="underline hover:no-underline text-left"
+                >
                   ENVÍOS GRATIS A PARTIR DE MXN $1,299
                 </button>
               </div>
               <div className="flex items-center space-x-2">
                 <RotateCcw className="w-4 h-4 text-black" />
-                <button onClick={handleReturnsClick} className="underline hover:no-underline text-left">
+                <button
+                  onClick={handleReturnsClick}
+                  className="underline hover:no-underline text-left"
+                >
                   DEVOLUCIONES GRATIS
                 </button>
               </div>
               <div className="flex items-center space-x-2">
                 <Gift className="w-4 h-4 text-black" />
-                <button onClick={handleGiftCardClick} className="underline hover:no-underline text-left">
+                <button
+                  onClick={handleGiftCardClick}
+                  className="underline hover:no-underline text-left"
+                >
                   ENVIO GRATIS PARA TARJETAS DE REGALO
                 </button>
               </div>
@@ -702,7 +769,12 @@ export default function ProductPage() {
           </div>
 
           {/* Expandable Sections */}
-          <Accordion type="single" collapsible className="w-full" onValueChange={handleAccordionOpen}>
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            onValueChange={handleAccordionOpen}
+          >
             <AccordionItem value="reviews">
               <AccordionTrigger className="text-left">
                 <div className="flex items-center space-x-2">
@@ -719,7 +791,9 @@ export default function ProductPage() {
                   <div className="flex items-center justify-between">
                     <div className="text-center">
                       <div className="text-3xl font-bold">4.9</div>
-                      <div className="flex justify-center">{renderStars(5)}</div>
+                      <div className="flex justify-center">
+                        {renderStars(5)}
+                      </div>
                     </div>
                     <Button variant="outline">Escribir una reseña</Button>
                   </div>
@@ -754,21 +828,42 @@ export default function ProductPage() {
                   {/* Reviews List */}
                   <div className="space-y-4">
                     {reviews.map((review) => (
-                      <div key={review.id} className="border-b pb-4 last:border-b-0">
+                      <div
+                        key={review.id}
+                        className="border-b pb-4 last:border-b-0"
+                      >
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex">{renderStars(review.rating)}</div>
+                          <div className="flex">
+                            {renderStars(review.rating)}
+                          </div>
                         </div>
                         <h4 className="font-medium mb-2">{review.title}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{review.content}</p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {review.content}
+                        </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{review.author}</span>
+                          <span className="text-sm font-medium">
+                            {review.author}
+                          </span>
                           <div className="flex items-center space-x-4 text-sm">
                             <span>¿Útil?</span>
-                            <Button variant="ghost" size="sm" onClick={() => handleReviewHelpful(review.id, true)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleReviewHelpful(review.id, true)
+                              }
+                            >
                               <ThumbsUp className="w-4 h-4 mr-1" />
                               {review.helpful}
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleReviewHelpful(review.id, false)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                handleReviewHelpful(review.id, false)
+                              }
+                            >
                               <ThumbsDown className="w-4 h-4 mr-1" />
                               {review.unhelpful}
                             </Button>
@@ -799,14 +894,17 @@ export default function ProductPage() {
               <AccordionContent>
                 <div className="space-y-4">
                   <h3 className="font-semibold">
-                    Un jersey tercero de la SNM inspirado en los años dorados y creada para la cancha
+                    Un jersey tercero de la SNM inspirado en los años dorados y
+                    creada para la cancha
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Este jersey adidas de México celebra los años dorados de la cultura y deporte en México diseñado con
-                    detalles en negro y dorado está inspirado en el esplendor de la música y el arte mexicanos.
-                    Confeccionada para garantizar un máximo rendimiento en el terreno de juego y un confort excepcional
-                    fuera de él, incorpora la tecnología transpirable HEAT.RDY perfecto para salir a darlo todo en la
-                    cancha.
+                    Este jersey adidas de México celebra los años dorados de la
+                    cultura y deporte en México diseñado con detalles en negro y
+                    dorado está inspirado en el esplendor de la música y el arte
+                    mexicanos. Confeccionada para garantizar un máximo
+                    rendimiento en el terreno de juego y un confort excepcional
+                    fuera de él, incorpora la tecnología transpirable HEAT.RDY
+                    perfecto para salir a darlo todo en la cancha.
                   </p>
                 </div>
               </AccordionContent>
@@ -823,7 +921,10 @@ export default function ProductPage() {
                     <li>• HEAT.RDY</li>
                   </ul>
                   <ul className="space-y-2">
-                    <li>• Escudo de la Selección Nacional de México termotransferido</li>
+                    <li>
+                      • Escudo de la Selección Nacional de México
+                      termotransferido
+                    </li>
                     <li>• Color del artículo: Black</li>
                     <li>• Número de artículo: JF2639</li>
                   </ul>
@@ -836,7 +937,9 @@ export default function ProductPage() {
               <AccordionContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-2">Instrucciones de lavado</h4>
+                    <h4 className="font-medium mb-2">
+                      Instrucciones de lavado
+                    </h4>
                     <ul className="space-y-1 text-sm">
                       <li>• No usar blanqueador</li>
                       <li>• No utilizar secadora</li>
@@ -846,7 +949,9 @@ export default function ProductPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-2">Información adicional sobre el cuidado</h4>
+                    <h4 className="font-medium mb-2">
+                      Información adicional sobre el cuidado
+                    </h4>
                     <ul className="space-y-1 text-sm">
                       <li>• Retirar inmediatamente</li>
                       <li>• Lavar y planchar al revés</li>
@@ -862,8 +967,9 @@ export default function ProductPage() {
               <AccordionContent>
                 <div className="space-y-6">
                   <p className="text-sm text-gray-600">
-                    ¿Quieres aparecer en nuestra galería? simplemente menciona la cuenta de @adidasmx en tus fotos de
-                    instagram y puede ser elegida para que aparezca aquí.
+                    ¿Quieres aparecer en nuestra galería? simplemente menciona
+                    la cuenta de @adidasmx en tus fotos de instagram y puede ser
+                    elegida para que aparezca aquí.
                   </p>
 
                   {/* UGC Carousel */}
@@ -871,47 +977,61 @@ export default function ProductPage() {
                     <div className="overflow-hidden">
                       <div
                         className="flex transition-transform duration-300 ease-in-out"
-                        style={{ transform: `translateX(-${ugcCurrentSlide * 100}%)` }}
+                        style={{
+                          transform: `translateX(-${ugcCurrentSlide * 100}%)`,
+                        }}
                       >
-                        {Array.from({ length: Math.ceil(ugcImages.length / 2) }, (_, slideIndex) => (
-                          <div key={slideIndex} className="w-full flex-shrink-0 grid grid-cols-2 gap-4">
-                            {ugcImages.slice(slideIndex * 2, slideIndex * 2 + 2).map((image, index) => (
-                              <div
-                                key={image.id}
-                                className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
-                                onClick={() => handleUGCClick(slideIndex * 2 + index)}
-                              >
-                                <div className="absolute top-2 right-2 z-10">
-                                  <Instagram className="w-5 h-5 text-white" />
-                                </div>
-                                <Image
-                                  src={image.src || "/placeholder.svg"}
-                                  alt={image.alt}
-                                  fill
-                                  className="object-cover"
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                                  <button 
-                                    className="text-white text-sm underline hover:no-underline"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleUGCProductsClick(slideIndex * 2 + index)
-                                    }}
+                        {Array.from(
+                          { length: Math.ceil(ugcImages.length / 2) },
+                          (_, slideIndex) => (
+                            <div
+                              key={slideIndex}
+                              className="w-full flex-shrink-0 grid grid-cols-2 gap-4"
+                            >
+                              {ugcImages
+                                .slice(slideIndex * 2, slideIndex * 2 + 2)
+                                .map((image, index) => (
+                                  <div
+                                    key={image.id}
+                                    className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                                    onClick={() =>
+                                      handleUGCClick(slideIndex * 2 + index)
+                                    }
                                   >
-                                    Ver productos
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ))}
+                                    <div className="absolute top-2 right-2 z-10">
+                                      <Instagram className="w-5 h-5 text-white" />
+                                    </div>
+                                    <Image
+                                      src={image.src || '/placeholder.svg'}
+                                      alt={image.alt}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                                      <button
+                                        className="text-white text-sm underline hover:no-underline"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleUGCProductsClick(
+                                            slideIndex * 2 + index
+                                          );
+                                        }}
+                                      >
+                                        Ver productos
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
 
                     {/* Navigation Buttons */}
                     <button
                       onClick={prevUGCSlide}
-                      className={`absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md ${ugcCurrentSlide === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md ${ugcCurrentSlide === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                       disabled={ugcCurrentSlide === 0}
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -919,21 +1039,26 @@ export default function ProductPage() {
 
                     <button
                       onClick={nextUGCSlide}
-                      className={`absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md ${ugcCurrentSlide === Math.ceil(ugcImages.length / 2) - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
-                      disabled={ugcCurrentSlide === Math.ceil(ugcImages.length / 2) - 1}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md ${ugcCurrentSlide === Math.ceil(ugcImages.length / 2) - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      disabled={
+                        ugcCurrentSlide === Math.ceil(ugcImages.length / 2) - 1
+                      }
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
 
                     {/* Pagination Dots */}
                     <div className="flex justify-center mt-4 space-x-2">
-                      {Array.from({ length: Math.ceil(ugcImages.length / 2) }, (_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setUgcCurrentSlide(index)}
-                          className={`w-2 h-2 rounded-full ${index === ugcCurrentSlide ? "bg-black" : "bg-gray-300"}`}
-                        />
-                      ))}
+                      {Array.from(
+                        { length: Math.ceil(ugcImages.length / 2) },
+                        (_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setUgcCurrentSlide(index)}
+                            className={`w-2 h-2 rounded-full ${index === ugcCurrentSlide ? 'bg-black' : 'bg-gray-300'}`}
+                          />
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
@@ -973,7 +1098,8 @@ export default function ProductPage() {
             <div className="max-w-2xl">
               <h2 className="text-4xl font-bold mb-4">MÉXICO DE ORO</h2>
               <p className="text-lg">
-                Sé protagonista de la nueva época dorada de México con adidas x Selección Nacional de México 24/25.
+                Sé protagonista de la nueva época dorada de México con adidas x
+                Selección Nacional de México 24/25.
               </p>
             </div>
           </div>
@@ -1010,7 +1136,10 @@ export default function ProductPage() {
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Guía de Tallas</h2>
-                <button onClick={() => setShowSizeGuide(false)} className="text-gray-500 hover:text-gray-700">
+                <button
+                  onClick={() => setShowSizeGuide(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   ✕
                 </button>
               </div>
@@ -1018,26 +1147,28 @@ export default function ProductPage() {
               {/* Tab Navigation */}
               <div className="flex border-b mb-4">
                 <button
-                  onClick={() => setSizeGuideTab("inches")}
-                  className={`px-4 py-2 ${sizeGuideTab === "inches" ? "border-b-2 border-black font-semibold" : ""}`}
+                  onClick={() => setSizeGuideTab('inches')}
+                  className={`px-4 py-2 ${sizeGuideTab === 'inches' ? 'border-b-2 border-black font-semibold' : ''}`}
                 >
                   Pulgadas
                 </button>
                 <button
-                  onClick={() => setSizeGuideTab("cm")}
-                  className={`px-4 py-2 ${sizeGuideTab === "cm" ? "border-b-2 border-black font-semibold" : ""}`}
+                  onClick={() => setSizeGuideTab('cm')}
+                  className={`px-4 py-2 ${sizeGuideTab === 'cm' ? 'border-b-2 border-black font-semibold' : ''}`}
                 >
                   cm
                 </button>
               </div>
 
               {/* Size Tables */}
-              {sizeGuideTab === "inches" && (
+              {sizeGuideTab === 'inches' && (
                 <div className="overflow-x-auto mb-4">
                   <table className="w-full border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-100">
-                        <th className="border border-gray-300 p-2 text-left">Etiqueta del producto</th>
+                        <th className="border border-gray-300 p-2 text-left">
+                          Etiqueta del producto
+                        </th>
                         <th className="border border-gray-300 p-2">XS</th>
                         <th className="border border-gray-300 p-2">S</th>
                         <th className="border border-gray-300 p-2">M</th>
@@ -1049,46 +1180,90 @@ export default function ProductPage() {
                     </thead>
                     <tbody>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Pecho</th>
-                        <td className="border border-gray-300 p-2">32 1/2 - 34"</td>
-                        <td className="border border-gray-300 p-2">34 1/2 - 36"</td>
-                        <td className="border border-gray-300 p-2">36 1/2 - 39"</td>
-                        <td className="border border-gray-300 p-2">39 1/2 - 42 1/2"</td>
-                        <td className="border border-gray-300 p-2">43 - 46 1/2"</td>
-                        <td className="border border-gray-300 p-2">47" - 51"</td>
-                        <td className="border border-gray-300 p-2">51 1/2 - 56"</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Pecho
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          32 1/2 - 34"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          34 1/2 - 36"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          36 1/2 - 39"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          39 1/2 - 42 1/2"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          43 - 46 1/2"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          47" - 51"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          51 1/2 - 56"
+                        </td>
                       </tr>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Cintura</th>
-                        <td className="border border-gray-300 p-2">27 1/2 - 29"</td>
-                        <td className="border border-gray-300 p-2">29 1/2 - 31 1/2"</td>
-                        <td className="border border-gray-300 p-2">32 - 34 1/2"</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Cintura
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          27 1/2 - 29"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          29 1/2 - 31 1/2"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          32 - 34 1/2"
+                        </td>
                         <td className="border border-gray-300 p-2">35 - 38"</td>
-                        <td className="border border-gray-300 p-2">38 1/2 - 42"</td>
-                        <td className="border border-gray-300 p-2">42 1/2 - 47"</td>
-                        <td className="border border-gray-300 p-2">47 1/2 - 52"</td>
+                        <td className="border border-gray-300 p-2">
+                          38 1/2 - 42"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          42 1/2 - 47"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          47 1/2 - 52"
+                        </td>
                       </tr>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Cadera</th>
-                        <td className="border border-gray-300 p-2">32 1/2 - 33 1/2"</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Cadera
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          32 1/2 - 33 1/2"
+                        </td>
                         <td className="border border-gray-300 p-2">34 - 36"</td>
-                        <td className="border border-gray-300 p-2">36 1/2 - 39"</td>
-                        <td className="border border-gray-300 p-2">39 1/2 - 42"</td>
-                        <td className="border border-gray-300 p-2">42 1/2 - 45 1/2"</td>
+                        <td className="border border-gray-300 p-2">
+                          36 1/2 - 39"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          39 1/2 - 42"
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          42 1/2 - 45 1/2"
+                        </td>
                         <td className="border border-gray-300 p-2">46 - 49"</td>
-                        <td className="border border-gray-300 p-2">49 1/2 - 53"</td>
+                        <td className="border border-gray-300 p-2">
+                          49 1/2 - 53"
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               )}
 
-              {sizeGuideTab === "cm" && (
+              {sizeGuideTab === 'cm' && (
                 <div className="overflow-x-auto mb-4">
                   <table className="w-full border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-100">
-                        <th className="border border-gray-300 p-2 text-left">Etiqueta del producto</th>
+                        <th className="border border-gray-300 p-2 text-left">
+                          Etiqueta del producto
+                        </th>
                         <th className="border border-gray-300 p-2">XS</th>
                         <th className="border border-gray-300 p-2">S</th>
                         <th className="border border-gray-300 p-2">M</th>
@@ -1100,70 +1275,127 @@ export default function ProductPage() {
                     </thead>
                     <tbody>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Pecho</th>
-                        <td className="border border-gray-300 p-2">83 - 86cm</td>
-                        <td className="border border-gray-300 p-2">87 - 91cm</td>
-                        <td className="border border-gray-300 p-2">92 - 99cm</td>
-                        <td className="border border-gray-300 p-2">100 - 108cm</td>
-                        <td className="border border-gray-300 p-2">109 - 118cm</td>
-                        <td className="border border-gray-300 p-2">119 - 130cm</td>
-                        <td className="border border-gray-300 p-2">131 - 142cm</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Pecho
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          83 - 86cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          87 - 91cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          92 - 99cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          100 - 108cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          109 - 118cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          119 - 130cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          131 - 142cm
+                        </td>
                       </tr>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Cintura</th>
-                        <td className="border border-gray-300 p-2">71 - 74cm</td>
-                        <td className="border border-gray-300 p-2">75 - 80cm</td>
-                        <td className="border border-gray-300 p-2">81 - 88cm</td>
-                        <td className="border border-gray-300 p-2">89 - 96cm</td>
-                        <td className="border border-gray-300 p-2">97 - 106cm</td>
-                        <td className="border border-gray-300 p-2">107 - 119cm</td>
-                        <td className="border border-gray-300 p-2">120 - 132cm</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Cintura
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          71 - 74cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          75 - 80cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          81 - 88cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          89 - 96cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          97 - 106cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          107 - 119cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          120 - 132cm
+                        </td>
                       </tr>
                       <tr>
-                        <th className="border border-gray-300 p-2 text-left bg-gray-50">Cadera</th>
-                        <td className="border border-gray-300 p-2">82 - 85cm</td>
-                        <td className="border border-gray-300 p-2">86 - 91cm</td>
-                        <td className="border border-gray-300 p-2">92 - 99cm</td>
-                        <td className="border border-gray-300 p-2">100 - 107cm</td>
-                        <td className="border border-gray-300 p-2">108 - 116cm</td>
-                        <td className="border border-gray-300 p-2">117 - 125cm</td>
-                        <td className="border border-gray-300 p-2">126 - 135cm</td>
+                        <th className="border border-gray-300 p-2 text-left bg-gray-50">
+                          Cadera
+                        </th>
+                        <td className="border border-gray-300 p-2">
+                          82 - 85cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          86 - 91cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          92 - 99cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          100 - 107cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          108 - 116cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          117 - 125cm
+                        </td>
+                        <td className="border border-gray-300 p-2">
+                          126 - 135cm
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               )}
 
-              <p className="text-sm text-gray-600 mb-6">Desliza horizontalmente para ver más opciones.</p>
+              <p className="text-sm text-gray-600 mb-6">
+                Desliza horizontalmente para ver más opciones.
+              </p>
 
               {/* How to Measure Section */}
               <div className="border-t pt-6">
                 <h3 className="text-lg font-bold mb-4">CÓMO MEDIR</h3>
                 <p className="mb-4">
-                  Toma una cinta métrica, anota las medidas y compáralas con nuestra guía de tallas para encontrar la
-                  talla adecuada.
+                  Toma una cinta métrica, anota las medidas y compáralas con
+                  nuestra guía de tallas para encontrar la talla adecuada.
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <p className="mb-2">Sujeta la cinta métrica de forma horizontal para medir:</p>
+                    <p className="mb-2">
+                      Sujeta la cinta métrica de forma horizontal para medir:
+                    </p>
                     <p className="mb-1">
                       <strong>1. Pecho</strong>, alrededor de la parte más ancha
                     </p>
                     <p className="mb-1">
-                      <strong>2. Cintura</strong>, alrededor de la parte más estrecha
+                      <strong>2. Cintura</strong>, alrededor de la parte más
+                      estrecha
                     </p>
                     <p className="mb-4">
-                      <strong>3. Cadera</strong>, alrededor de la parte más ancha, manteniendo los pies juntos
+                      <strong>3. Cadera</strong>, alrededor de la parte más
+                      ancha, manteniendo los pies juntos
                     </p>
 
-                    <p className="mb-2">Sujeta la cinta métrica de forma vertical para medir:</p>
+                    <p className="mb-2">
+                      Sujeta la cinta métrica de forma vertical para medir:
+                    </p>
                     <p className="mb-1">
-                      <strong>4. Tiro de la entrepierna</strong>, desde la entrepierna hasta el piso
+                      <strong>4. Tiro de la entrepierna</strong>, desde la
+                      entrepierna hasta el piso
                     </p>
                     <p>
-                      <strong>5. Altura</strong>, desde la parte superior de la cabeza hasta el piso, manteniendo una
-                      postura recta
+                      <strong>5. Altura</strong>, desde la parte superior de la
+                      cabeza hasta el piso, manteniendo una postura recta
                     </p>
                   </div>
                   <div className="flex justify-center">
@@ -1186,36 +1418,50 @@ export default function ProductPage() {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">ENVÍOS GRATIS A PARTIR DE MXN $1,299</h2>
-                <button onClick={() => setShowShippingModal(false)} className="text-gray-500 hover:text-gray-700">
+                <h2 className="text-xl font-bold">
+                  ENVÍOS GRATIS A PARTIR DE MXN $1,299
+                </h2>
+                <button
+                  onClick={() => setShowShippingModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   ✕
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <p className="font-bold">¿CUÁNTO TARDARÁ EN LLEGAR MI PEDIDO?</p>
+                  <p className="font-bold">
+                    ¿CUÁNTO TARDARÁ EN LLEGAR MI PEDIDO?
+                  </p>
                 </div>
                 <div>
                   <p className="font-bold">TIEMPOS REGULARES DE ENVIO</p>
                   <p>
-                    Una vez que nuestro almacén termine la preparación de tu pedido recibirás un correo electrónico de
-                    confirmación con tu guía de seguimiento, a partir de este momento adidas realizará la entrega en la
-                    dirección registrada en la orden en un tiempo de 3 (tres) a 5 (cinco) días hábiles a través de
-                    nuestros socios logísticos autorizados.
+                    Una vez que nuestro almacén termine la preparación de tu
+                    pedido recibirás un correo electrónico de confirmación con
+                    tu guía de seguimiento, a partir de este momento adidas
+                    realizará la entrega en la dirección registrada en la orden
+                    en un tiempo de 3 (tres) a 5 (cinco) días hábiles a través
+                    de nuestros socios logísticos autorizados.
                   </p>
                 </div>
                 <div>
                   <p>
-                    Si compraste una tarjeta de regalo, recuerda que el email deberá llegar en un lapso de 1 a 4 horas.
-                    Si no lo recibes, contáctanos.
+                    Si compraste una tarjeta de regalo, recuerda que el email
+                    deberá llegar en un lapso de 1 a 4 horas. Si no lo recibes,
+                    contáctanos.
                   </p>
                 </div>
                 <div>
-                  <p className="font-bold">ENTREGA RÁPIDA EN CDMX Y ESTADO DE MEXICO</p>
+                  <p className="font-bold">
+                    ENTREGA RÁPIDA EN CDMX Y ESTADO DE MEXICO
+                  </p>
                   <p>
-                    Si utilizaste nuestro Servicio Express recibirás en un máximo de 2 (dos) días hábiles a través de
-                    nuestro socio logístico iVoy. Recuerda que este servicio únicamente se encuentra disponible para
-                    determinados códigos postales de CDMX y Estado de México.
+                    Si utilizaste nuestro Servicio Express recibirás en un
+                    máximo de 2 (dos) días hábiles a través de nuestro socio
+                    logístico iVoy. Recuerda que este servicio únicamente se
+                    encuentra disponible para determinados códigos postales de
+                    CDMX y Estado de México.
                   </p>
                 </div>
               </div>
@@ -1230,43 +1476,58 @@ export default function ProductPage() {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">¿CÓMO PUEDO DEVOLVER MI PEDIDO?</h2>
-                <button onClick={() => setShowReturnsModal(false)} className="text-gray-500 hover:text-gray-700">
+                <h2 className="text-xl font-bold">
+                  ¿CÓMO PUEDO DEVOLVER MI PEDIDO?
+                </h2>
+                <button
+                  onClick={() => setShowReturnsModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   ✕
                 </button>
               </div>
               <div className="space-y-4">
                 <p>Las tarjetas de regalo no aplica para devolución</p>
                 <p>
-                  ¿Tu artículo no fue lo que esperabas? Devuelve tu pedido adidas sin costo alguno. Recuerda que tienes
-                  30 días desde la fecha de recepción de tu pedido para cualquier cambio o devolución o cambio.
+                  ¿Tu artículo no fue lo que esperabas? Devuelve tu pedido
+                  adidas sin costo alguno. Recuerda que tienes 30 días desde la
+                  fecha de recepción de tu pedido para cualquier cambio o
+                  devolución o cambio.
                 </p>
                 <div>
                   <p>
-                    1. Inicia tu proceso de devolución comunicándote con nuestro equipo de Atención al Cliente o a
-                    través de nuestro portal de autogestión.
+                    1. Inicia tu proceso de devolución comunicándote con nuestro
+                    equipo de Atención al Cliente o a través de nuestro portal
+                    de autogestión.
                   </p>
                   <p>
-                    2. Recibirás una guía de devolución que deberás imprimir para entregar los productos o solicitar una
-                    recolecta en tu domicilio.
+                    2. Recibirás una guía de devolución que deberás imprimir
+                    para entregar los productos o solicitar una recolecta en tu
+                    domicilio.
                   </p>
                   <p>
-                    3. Asegúrate de los artículos se encuentren en su empaque original y de que los artículos de ropa o
-                    calzado llevan las etiquetas originales adheridas.
+                    3. Asegúrate de los artículos se encuentren en su empaque
+                    original y de que los artículos de ropa o calzado llevan las
+                    etiquetas originales adheridas.
                   </p>
                   <p>
-                    4. Una vez que el pedido sea recibido en nuestro almacén, será validado y autorizado. Recibirás en
-                    tu correo electrónico una notificación de que tu devolución fue exitosamente procesada.
+                    4. Una vez que el pedido sea recibido en nuestro almacén,
+                    será validado y autorizado. Recibirás en tu correo
+                    electrónico una notificación de que tu devolución fue
+                    exitosamente procesada.
                   </p>
                   <p>
-                    5. A partir de este momento Servicio al Cliente podrá liberar tu nueva orden con el artículo a
-                    cambiar o bien, iniciar tu proceso de reembolso.
+                    5. A partir de este momento Servicio al Cliente podrá
+                    liberar tu nueva orden con el artículo a cambiar o bien,
+                    iniciar tu proceso de reembolso.
                   </p>
                 </div>
                 <p>
-                  <strong>NOTA: </strong>No aceptamos devoluciones de trajes de baño, calcetas o calcetines, ropa
-                  interior, mascarillas, artículos personalizados y productos categoría "HYPE", tales como "YEEZY,
-                  Gucci, Productos Edición Limitada, Tarjetas de regalo y Colaboraciones Especiales.
+                  <strong>NOTA: </strong>No aceptamos devoluciones de trajes de
+                  baño, calcetas o calcetines, ropa interior, mascarillas,
+                  artículos personalizados y productos categoría "HYPE", tales
+                  como "YEEZY, Gucci, Productos Edición Limitada, Tarjetas de
+                  regalo y Colaboraciones Especiales.
                 </p>
               </div>
             </div>
@@ -1280,12 +1541,20 @@ export default function ProductPage() {
           <div className="bg-white rounded-lg max-w-lg w-full">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">ENVIO GRATIS PARA TARJETAS DE REGALO</h2>
-                <button onClick={() => setShowGiftCardModal(false)} className="text-gray-500 hover:text-gray-700">
+                <h2 className="text-xl font-bold">
+                  ENVIO GRATIS PARA TARJETAS DE REGALO
+                </h2>
+                <button
+                  onClick={() => setShowGiftCardModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   ✕
                 </button>
               </div>
-              <p>Recibirás el enlace de tu tarjeta de regalo electrónica por correo.</p>
+              <p>
+                Recibirás el enlace de tu tarjeta de regalo electrónica por
+                correo.
+              </p>
             </div>
           </div>
         </div>
@@ -1299,9 +1568,9 @@ export default function ProductPage() {
           width={1200}
           height={800}
           className="w-full h-auto object-cover block"
-          style={{ display: "block", margin: 0, padding: 0 }}
+          style={{ display: 'block', margin: 0, padding: 0 }}
         />
       </div>
     </div>
-  )
+  );
 }
